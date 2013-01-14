@@ -9,7 +9,7 @@ public class KinectToPlane extends PApplet {
 
 	
 
-	private KinectController kinetController;
+	private KinectController kinectController;
 	UserInterface ui;
 	private ControlP5 ctrl;
 	
@@ -20,13 +20,14 @@ public class KinectToPlane extends PApplet {
 
 	public void setup() {
 		size(1024, 768, OPENGL);
-		//kinetController = new KinectController(this);
-		ui = new UserInterface(this);
+		kinectController = new KinectController(this);
+		println("kinect controler setup");
+		
+		//ui = new UserInterface(this);
 		
 		//bgCol = TColor.newRandom().toARGB();
 		bgCol = TColor.MAGENTA.toARGB();
 		kinectCanvas = new KinectCanvas(this);
-	//	ctrl = new ControlP5(this);
 		
 		
 		
@@ -35,7 +36,9 @@ public class KinectToPlane extends PApplet {
 	public void draw() {
 
 		background(60);
-		kinectCanvas.draw();
+		//update the kinect info
+		kinectController.draw();
+		//kinectCanvas.draw();
 		
 
 	}
