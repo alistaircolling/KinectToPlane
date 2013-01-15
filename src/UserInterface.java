@@ -7,6 +7,7 @@ import controlP5.Group;
 import controlP5.ListBox;
 import controlP5.Slider;
 import controlP5.Slider2D;
+import controlP5.Toggle;
 
 public class UserInterface {
 
@@ -32,6 +33,14 @@ public class UserInterface {
 	public ListBox list;
 	private MyControlListener myListener;
 	private int totalRects = 0;
+	private Toggle togglePointCloud;
+	private Slider boxWidth;
+	private Group boxPos;
+	private Slider boxHeight;
+	private Slider boxDepth;
+	private Slider boxX;
+	private Slider boxY;
+	private Slider boxZ;
 
 	
 	public UserInterface(KinectToPlane app) {
@@ -53,21 +62,14 @@ public class UserInterface {
 		rectPos = cp5.addGroup("rectPos").setPosition(10, 10)
 		// .setBackgroundColor(TColor.BLUE.toARGB())
 		// .setColorForeground(TColor.CYAN.toARGB())
-				.setSize(230, 400)
+				.setSize(230, 400);
 
-		;
+		
 
 		createRect = cp5.addBang("createRect").setColorCaptionLabel(textCol)
 				.setGroup("rectPos").setPosition(0, 15)
 				.addListener(myListener)
 				.setSize(sliderHeight, sliderHeight);
-
-		/*
-		 * xzPos = cp5.addSlider2D("X Z POS") .setColorCaptionLabel(textCol)
-		 * .setPosition(0, sliderHeight+spacer+15).setGroup("rectPos")
-		 * .setSize(100,100) .setArrayValue(new float[] {50, 50})
-		 */
-		// .disableCrosshair()
 
 		xPos = cp5.addSlider("X POS").setPosition(0, 55)
 				.setSize(sliderWidth, sliderHeight).setGroup("rectPos")
@@ -120,7 +122,49 @@ public class UserInterface {
 		list = cp5.addListBox("list").setPosition(0, 330).setGroup("rectPos")
 				.setWidth(sliderWidth);
 
+		togglePointCloud = cp5.addToggle("toggle Point Cloud").setColorCaptionLabel(textCol)
+				.setGroup("rectPos").setPosition(0, 350)
+				.addListener(myListener)
+				.setSize(sliderHeight, sliderHeight);
 		
+		boxPos = cp5.addGroup("BOX PARAMS").setPosition(sketch.width-250, 10)
+			//	 .setBackgroundColor(TColor.BLUE.toARGB())
+				 .setColorForeground(TColor.CYAN.toARGB())
+				 .setSize(230, 400);
+				
+
+		
+		boxWidth = cp5.addSlider("BOX WIDTH").setPosition(0, 0)
+				.setSize(sliderWidth, sliderHeight).setGroup("BOX PARAMS")
+				.setRange(0, 640).setColorCaptionLabel(textCol)
+				.addListener(myListener)
+				.setHandleSize(10).setDecimalPrecision(0);
+		boxHeight = cp5.addSlider("BOX HEIGHT").setPosition(0, 20)
+				.setSize(sliderWidth, sliderHeight).setGroup("BOX PARAMS")
+				.setRange(0, 640).setColorCaptionLabel(textCol)
+				.addListener(myListener)
+				.setHandleSize(10).setDecimalPrecision(0);
+		boxDepth = cp5.addSlider("BOX DEPTH").setPosition(0, 40)
+				.setSize(sliderWidth, sliderHeight).setGroup("BOX PARAMS")
+				.setRange(0, 640).setColorCaptionLabel(textCol)
+				.addListener(myListener)
+				.setHandleSize(10).setDecimalPrecision(0);
+		
+		boxX = cp5.addSlider("BOX X").setPosition(0, 65)
+				.setSize(sliderWidth, sliderHeight).setGroup("BOX PARAMS")
+				.setRange(0, 640).setColorCaptionLabel(textCol)
+				.addListener(myListener)
+				.setHandleSize(10).setDecimalPrecision(0);
+		boxY= cp5.addSlider("BOX Y").setPosition(0, 85)
+				.setSize(sliderWidth, sliderHeight).setGroup("BOX PARAMS")
+				.setRange(0, 640).setColorCaptionLabel(textCol)
+				.addListener(myListener)
+				.setHandleSize(10).setDecimalPrecision(0);
+		boxZ= cp5.addSlider("BOX Z").setPosition(0, 105)
+				.setSize(sliderWidth, sliderHeight).setGroup("BOX PARAMS")
+				.setRange(0, 640).setColorCaptionLabel(textCol)
+				.addListener(myListener)
+				.setHandleSize(10).setDecimalPrecision(0);
 		  
 
 	}

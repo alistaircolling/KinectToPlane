@@ -9,25 +9,27 @@ public class KinectToPlane extends PApplet {
 
 	
 
-	private KinectController kinectController;
+	public KinectController kinectController;
 	UserInterface ui;
 	private ControlP5 ctrl;
 	
 	private int bgCol;
 	public KinectCanvas kinectCanvas;
 	private ArrayList<Rect> rects;
+	public boolean showPointCloud;
 	
 
 	public void setup() {
-		size(1024, 768, OPENGL);
-		kinectController = new KinectController(this);
-		println("kinect controler setup");
+		size(1280, 768, OPENGL);
+		colorMode(HSB, 5, 100,100);
+	//	kinectController = new KinectController(this);
+		println("kinect controller setup");
 		
-		//ui = new UserInterface(this);
+		ui = new UserInterface(this);
 		
 		//bgCol = TColor.newRandom().toARGB();
 		bgCol = TColor.MAGENTA.toARGB();
-		kinectCanvas = new KinectCanvas(this);
+	//	kinectCanvas = new KinectCanvas(this);
 		
 		
 		
@@ -35,11 +37,10 @@ public class KinectToPlane extends PApplet {
 
 	public void draw() {
 
-		background(60);
+		background(60, 0, 100);
 		//update the kinect info
-		kinectController.draw();
-		//kinectCanvas.draw();
-		
+	//	kinectController.draw();
+	//	kinectCanvas.draw(kinectController.heads);
 
 	}
 
@@ -75,6 +76,16 @@ public class KinectToPlane extends PApplet {
 	public void addRect(Rect rect) {
 		
 		rects.add(rect);
+		
+	}
+
+	public void togglePointCloud(float value) {
+		println("toggle:"+ value);
+		if (value==0){
+			showPointCloud = false;
+		}else{
+			showPointCloud = true;
+		}
 		
 	}
 

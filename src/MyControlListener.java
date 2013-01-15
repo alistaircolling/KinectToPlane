@@ -24,6 +24,10 @@ public class MyControlListener implements ControlListener {
 	    if (theEvent.getController().getLabel()=="createRect"){
 	    	canvas.addRect();
 	    }
+	    if (theEvent.getController().getLabel()=="toggle Point Cloud"){
+	    	sketch.println("toggle point cloud");
+	    	sketch.togglePointCloud(theEvent.getController().getValue());
+	    }
 		
 	  }
 
