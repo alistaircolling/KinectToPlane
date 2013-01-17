@@ -17,19 +17,23 @@ public class KinectToPlane extends PApplet {
 	public KinectCanvas kinectCanvas;
 	private ArrayList<Rect> rects;
 	public boolean showPointCloud;
+	private float hue = 0;
 	
 
 	public void setup() {
 		size(1280, 768, OPENGL);
-		colorMode(HSB, 5, 100,100);
-	//	kinectController = new KinectController(this);
+		colorMode(HSB, 5000, 100,100);
+		ui = new UserInterface(this);
+		
+		
+		
+		kinectController = new KinectController(this);
 		println("kinect controller setup");
 		
-		ui = new UserInterface(this);
 		
 		//bgCol = TColor.newRandom().toARGB();
 		bgCol = TColor.MAGENTA.toARGB();
-	//	kinectCanvas = new KinectCanvas(this);
+		kinectCanvas = new KinectCanvas(this);
 		
 		
 		
@@ -37,10 +41,11 @@ public class KinectToPlane extends PApplet {
 
 	public void draw() {
 
+		
 		background(60, 0, 100);
 		//update the kinect info
-	//	kinectController.draw();
-	//	kinectCanvas.draw(kinectController.heads);
+		kinectController.draw();
+		kinectCanvas.draw(kinectController.heads);
 
 	}
 

@@ -5,8 +5,10 @@ import controlP5.Bang;
 import controlP5.ControlP5;
 import controlP5.Group;
 import controlP5.ListBox;
+import controlP5.Println;
 import controlP5.Slider;
 import controlP5.Slider2D;
+import controlP5.Textarea;
 import controlP5.Toggle;
 
 public class UserInterface {
@@ -33,14 +35,16 @@ public class UserInterface {
 	public ListBox list;
 	private MyControlListener myListener;
 	private int totalRects = 0;
-	private Toggle togglePointCloud;
-	private Slider boxWidth;
-	private Group boxPos;
-	private Slider boxHeight;
-	private Slider boxDepth;
-	private Slider boxX;
-	private Slider boxY;
-	private Slider boxZ;
+	public Toggle togglePointCloud;
+	public Slider boxWidth;
+	public Group boxPos;
+	public Slider boxHeight;
+	public Slider boxDepth;
+	public Slider boxX;
+	public Slider boxY;
+	public Slider boxZ;
+	private Println console;
+	public Textarea myTextarea;
 
 	
 	public UserInterface(KinectToPlane app) {
@@ -165,7 +169,18 @@ public class UserInterface {
 				.setRange(0, 640).setColorCaptionLabel(textCol)
 				.addListener(myListener)
 				.setHandleSize(10).setDecimalPrecision(0);
-		  
+		
+		myTextarea = cp5.addTextarea("console")
+                .setPosition(0, sketch.height-300)
+                .setSize(400, 300)
+                .setLineHeight(14)
+                .setColor(sketch.color(3,0,100))
+                .setColorBackground(sketch.color(4.6f, 60, 100))
+                .setColorForeground(sketch.color(255, 0, 100));
+		
+		console  = cp5.addConsole(myTextarea);
+		
+		sketch.println("INITIALIZING KINECT....");
 
 	}
 	

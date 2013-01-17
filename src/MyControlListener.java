@@ -18,9 +18,9 @@ public class MyControlListener implements ControlListener {
 	  public void controlEvent(ControlEvent theEvent) {
 		
 	    StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("i got an event from: ");
-		stringBuilder.append(theEvent.getController().getLabel());
-		PApplet.println(stringBuilder.toString());
+	//	stringBuilder.append("i got an event from: ");
+//		stringBuilder.append(theEvent.getController().getLabel());
+	//	PApplet.println(stringBuilder.toString());
 	    if (theEvent.getController().getLabel()=="createRect"){
 	    	canvas.addRect();
 	    }

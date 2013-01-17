@@ -10,6 +10,7 @@ public class KinectController {
 	private KinectToPlane mainSketch;
 	public SimpleOpenNI kinect;
 	public ArrayList<Head> heads;
+	public boolean kinectConnected;
 
 	public KinectController(KinectToPlane sketch) {
 
@@ -20,28 +21,28 @@ public class KinectController {
 
 	private void init() {
 
-		kinect = new SimpleOpenNI(mainSketch);
-		kinect.enableDepth();
-		kinect.enableRGB();
-		kinect.enableUser(SimpleOpenNI.SKEL_PROFILE_NONE);
+		if (kinectConnected) {
+			kinect = new SimpleOpenNI(mainSketch);
+			kinect.enableDepth();
+			kinect.enableRGB();
+			kinect.enableUser(SimpleOpenNI.SKEL_PROFILE_NONE);
+		}
+		mainSketch.println("KINECT INITIALISED");
 
 	}
 
 	public void draw() {
 
-		kinect.update();
+		if (kinectConnected) kinect.update();
 
 		// check if we are using the user list or the point cloud
 
 		if (mainSketch.showPointCloud) {
-			
-			
+
 			drawHitArea();
-			
-			
-			
 
 		} else {
+			if (!kinectConnected) return;
 
 			IntVector userList = new IntVector();
 			kinect.getUsers(userList);
@@ -66,9 +67,7 @@ public class KinectController {
 	}
 
 	private void drawHitArea() {
-		
-		
-		
+
 	}
 
 	private boolean checkIfUserExists(int userId) {
