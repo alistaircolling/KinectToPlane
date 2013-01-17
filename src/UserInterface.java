@@ -181,7 +181,7 @@ public class UserInterface {
 		
 		console  = cp5.addConsole(myTextarea);
 		
-		sketch.println("INITIALIZING KINECT....");
+		sketch.println("INITIALIZING KINECT.......");
 
 	}
 	
