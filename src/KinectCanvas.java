@@ -24,6 +24,8 @@ public class KinectCanvas {
 	private PeasyCam cam;
 	private float s;
 	private PVector[] depthPoints;
+	private float mouseRotation;
+	private float mouseRotationX;
 
 	public KinectCanvas(KinectToPlane app) {
 		sketch = app;
@@ -129,7 +131,7 @@ public class KinectCanvas {
 			depthPoints = sketch.kinectController.kinect.depthMapRealWorld();
 		} else {
 			try {
-				//only load if null
+				// only load if null
 				if (depthPoints == null) {
 					depthPoints = parseTextFileToDepth();
 				}
@@ -159,21 +161,25 @@ public class KinectCanvas {
 		float theY;
 		float theZ;
 
-		int skip = 20;
+		int skip = 10;
 		sketch.background(0);
 		sketch.pushMatrix();
 
+		//allow control via mouse
+		if (sketch.cmdDown) {
+			 mouseRotation = sketch.map(sketch.mouseX, 0, sketch.width, -360, 360);
+			 mouseRotationX = sketch.map(sketch.mouseY, 0, sketch.height,
+						-180, 180);
+			s = sketch.map(sketch.mouseY, 0, sketch.height, -10, 10);
+		}
 		sketch.translate(sketch.width * .5f, sketch.height * .5f, -1000);
 		sketch.rotateX(sketch.radians(180));
 		sketch.translate(0, 0, 1000);
-		float mouseRotation = sketch.map(sketch.mouseX, 0, sketch.width, -360,
-				360);
+		
 		sketch.rotateY(sketch.radians(mouseRotation));
-		float mouseRotationX = sketch.map(sketch.mouseY, 0, sketch.height,
-				-180, 180);
-		s = sketch.map(sketch.mouseY, 0, sketch.height, -10, 10);
+		
 		// rotateZ(radians(mouseRotation));
-		sketch.translate(0, 0, s * -1000);
+		sketch.translate(-300, -500, s * -1000);
 		sketch.scale(s);
 
 		for (int i = 0; i < depthPoints.length; i += skip) {
@@ -186,16 +192,16 @@ public class KinectCanvas {
 			sketch.point(theX, theY, theZ);
 
 		}
+		// TODO DRAW BOX HERE
+
+		sketch.translate(ui.boxX.getValue(), ui.boxY.getValue(),
+				ui.boxZ.getValue());
+		sketch.stroke(0, 100, 100);
+		sketch.noFill();
+		sketch.box(ui.boxWidth.getValue(), ui.boxHeight.getValue(),
+				ui.boxDepth.getValue());
 
 		sketch.popMatrix();
-
-		// TODO DRAW BOX HERE
-		/*
-		 * sketch.translate(ui.boxX.getValue(), ui.boxY.getValue(),
-		 * ui.boxZ.getValue()); sketch.stroke(0, 100, 100); sketch.noFill();
-		 * sketch.box(ui.boxWidth.getValue(), ui.boxHeight.getValue(),
-		 * ui.boxDepth.getValue()); sketch.popMatrix();
-		 */
 
 	}
 

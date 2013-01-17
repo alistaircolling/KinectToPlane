@@ -7,61 +7,56 @@ import controlP5.ControlP5;
 
 public class KinectToPlane extends PApplet {
 
-	
-
 	public KinectController kinectController;
 	UserInterface ui;
 	private ControlP5 ctrl;
-	
+
 	private int bgCol;
 	public KinectCanvas kinectCanvas;
 	private ArrayList<Rect> rects;
 	public boolean showPointCloud;
 	private float hue = 0;
-	
+	public boolean cmdDown;
 
 	public void setup() {
 		size(1280, 768, OPENGL);
-		colorMode(HSB, 5000, 100,100);
+		colorMode(HSB, 5000, 100, 100);
 		ui = new UserInterface(this);
-		
-		
-		
+
 		kinectController = new KinectController(this);
 		println("kinect controller setup");
-		
-		
-		//bgCol = TColor.newRandom().toARGB();
+
+		// bgCol = TColor.newRandom().toARGB();
 		bgCol = TColor.MAGENTA.toARGB();
 		kinectCanvas = new KinectCanvas(this);
-		
-		
-		
+
 	}
 
 	public void draw() {
 
-		
 		background(60, 0, 100);
-		//update the kinect info
+		// update the kinect info
 		kinectController.draw();
 		kinectCanvas.draw(kinectController.heads);
 
 	}
-
-	
-
 
 	public void mousePressed() {
 
 	}
 
 	public void mouseDragged() {
-	//	println("mouse dragged");
+		// println("mouse dragged");
 	}
 
 	public void mouseReleased() {
-		//println("mouse released");
+		// println("mouse released");
+	}
+
+	public void keyReleased() {
+		if (keyCode==157){
+			cmdDown = false;
+		}
 	}
 
 	public void keyPressed() {
@@ -71,6 +66,9 @@ public class KinectToPlane extends PApplet {
 		case 67:
 			ui.toggleShow();
 			break;
+		case 157:
+			cmdDown = true;
+			break;
 
 		default:
 			break;
@@ -79,20 +77,19 @@ public class KinectToPlane extends PApplet {
 	}
 
 	public void addRect(Rect rect) {
-		
+
 		rects.add(rect);
-		
+
 	}
 
 	public void togglePointCloud(float value) {
-		println("toggle:"+ value);
-		if (value==0){
+		println("toggle:" + value);
+		if (value == 0) {
 			showPointCloud = false;
-		}else{
+		} else {
 			showPointCloud = true;
 		}
-		
+
 	}
 
-}
-;
+};

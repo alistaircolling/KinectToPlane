@@ -172,10 +172,11 @@ public class UserInterface {
 		
 		myTextarea = cp5.addTextarea("console")
                 .setPosition(0, sketch.height-300)
+                .setGroup("rectPos")
                 .setSize(400, 300)
                 .setLineHeight(14)
                 .setColor(sketch.color(3,0,100))
-                .setColorBackground(sketch.color(4.6f, 60, 100))
+                .setColorBackground(sketch.color(1, 0, 20))
                 .setColorForeground(sketch.color(255, 0, 100));
 		
 		console  = cp5.addConsole(myTextarea);
