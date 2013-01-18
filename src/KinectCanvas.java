@@ -10,7 +10,11 @@ import peasy.PeasyCam;
 import processing.core.PVector;
 import toxi.color.TColor;
 import toxi.geom.Rect;
+import toxi.geom.Vec3D;
+import toxi.geom.mesh.TriangleMesh;
+import toxi.geom.mesh.Vertex;
 import toxi.math.waves.SineWave;
+import toxi.processing.ToxiclibsSupport;
 
 public class KinectCanvas {
 
@@ -28,6 +32,8 @@ public class KinectCanvas {
 	private float mouseRotationX;
 	private int pointsInBox = 0;
 	private int topCount;
+	private ToxiclibsSupport gfx;
+	float camX, camY, camZ;
 
 	public KinectCanvas(KinectToPlane app) {
 		sketch = app;
@@ -41,6 +47,7 @@ public class KinectCanvas {
 		topCount = 0;
 		wave = new SineWave(0, .005f, 1, 0);
 		wave2 = new SineWave(.7f, .005f, 1, 0);
+		gfx = new ToxiclibsSupport(sketch);
 		// cam = new PeasyCam((PApplet)sketch, 0, 0, 0, 1000);
 
 	}
@@ -62,14 +69,10 @@ public class KinectCanvas {
 		if (controller.kinectConnected)
 			sketch.image(sketch.kinectController.kinect.depthImage(), 0, 0);
 		if (sketch.showPointCloud) {
-			/*
-			 * if (cam==null){
-			 * 
-			 * }
-			 */
-			// cam.beginHUD();
-			drawPointCloud();
-			// cam.endHUD();
+			getDepthPoints();
+			// drawPointCloud();
+			drawMesh();
+
 		} else {
 			if (!controller.kinectConnected) {
 				// sketch.println("no kinect connected");
@@ -119,6 +122,116 @@ public class KinectCanvas {
 
 	}
 
+	public void drawMesh() {
+
+		sketch.background(0);
+		sketch.lights();
+
+		// mesh to go behind objects
+
+		TriangleMesh bgMesh = new TriangleMesh();
+
+		TriangleMesh triMesh = null;
+		TriangleMesh triMesh2 = null;
+		int skip = 10;
+		float maxX = 0;
+		float maxY = 0;
+		float maxZ = 0;
+		int minZ = 1300;
+		
+		
+		for (int x = 0; x < 640 - skip; x+=skip) {
+			for (int y = 1; y < 480 - skip; y+=skip) {
+
+				triMesh = new TriangleMesh();
+				triMesh2 = new TriangleMesh();
+
+				PVector vect1 = depthPoints[x + (y * 640)];
+				PVector vect2 = depthPoints[(x + (y * 640) + skip)];
+				PVector vect3 = depthPoints[(x + ((y + skip) * 640))];
+				PVector vect4 = depthPoints[(x + ((y + skip) * 640) + skip)];
+				
+				PVector[] vects = {vect1, vect2, vect3, vect4};
+				
+				if (vect1.x>maxX) maxX = vect1.x;
+				if (vect2.x>maxX) maxX = vect2.x;
+				if (vect3.x>maxX) maxX = vect3.x;
+				if (vect4.x>maxX) maxX = vect4.x;
+				if (vect1.y>maxY) maxY = vect1.y;
+				if (vect2.y>maxY) maxY = vect2.y;
+				if (vect3.y>maxY) maxY = vect3.y;
+				if (vect4.y>maxY) maxY = vect4.y;
+				if (vect1.z>maxZ) maxZ = vect1.z;
+				if (vect2.z>maxZ) maxZ = vect2.z;
+				if (vect3.z>maxZ) maxZ = vect3.z;
+				if (vect4.z>maxZ) maxZ = vect4.z;
+				
+				//if any of the vectors have a z value of less than X set to the highest val
+				
+				if (vect1.z <minZ) vect1.z = maxZ;
+				if (vect2.z <minZ) vect2.z = maxZ;
+				if (vect3.z <minZ) vect3.z = maxZ;
+				if (vect4.z <minZ) vect4.z = maxZ;
+				
+				
+				Vertex v1 = new Vertex(new Vec3D(vect1.x, vect1.y, vect1.z), 0);
+				Vertex v2 = new Vertex(new Vec3D(vect2.x, vect2.y, vect2.z), 0);
+				Vertex v3 = new Vertex(new Vec3D(vect3.x, vect3.y, vect3.z), 0);
+				Vertex v4 = new Vertex(new Vec3D(vect4.x, vect4.y, vect4.z), 0);
+
+				triMesh.addFace(v1, v2, v3);
+				triMesh2.addFace(v2, v3, v4);
+				
+
+				triMesh.translate(new Vec3D(0-(maxX*.5f), 0-(maxY*.5f), 0-(maxZ*.5f)));
+				triMesh2.translate(new Vec3D(0-(maxX*.5f), 0-(maxY*.5f), 0-(maxZ*0.5f)));
+
+				triMesh.rotateX(sketch.radians(180));
+				triMesh2.rotateX(sketch.radians(180));
+				
+				triMesh.rotateY(rotation);
+				triMesh2.rotateY(rotation);
+
+				// triMesh.rotateX(rotationX);
+				// triMesh2.rotateX(rotationX);
+
+				sketch.noStroke();
+				sketch.fill(x, y, 100);
+				gfx.mesh(triMesh);
+				gfx.mesh(triMesh2);
+
+			//	bgMesh.addMesh(triMesh);
+			//	bgMesh.addMesh(triMesh2);
+
+			}
+
+		}
+
+		rotation += sketch.map(sketch.mouseY, 0, sketch.height, -.1f, .1f);
+
+		// set cam positions
+		camX = 0;// map(mouseX, 0, width, -500, 500);
+		camY = 0;
+		camZ = 4000;// map(mouseY, 0, height, -8000, 8000);
+
+		sketch.camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
+
+	}
+
+	private boolean isAHole(PVector[] vects) {
+		
+		
+		
+		for (int i = 0; i < vects.length; i++) {
+			PVector vect = vects[i];
+			if (vect.x == 0 && vect.y==0 &&vect.z==0){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
 	private void drawPointCloud() {
 
 		// sketch.rotateX(sketch.radians(180));
@@ -128,21 +241,7 @@ public class KinectCanvas {
 		// sketch.rotateZ(sketch.radians(rotation));
 		rotation += 2;
 
-		if (controller.kinectConnected) {
-
-			depthPoints = sketch.kinectController.kinect.depthMapRealWorld();
-		} else {
-			try {
-				// only load if null
-				if (depthPoints == null) {
-					depthPoints = parseTextFileToDepth();
-				}
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
+		
 		/*
 		 * ***************** CODE TO WRITE TO FILE **************** String str =
 		 * "";
@@ -186,17 +285,17 @@ public class KinectCanvas {
 		sketch.scale(s);
 
 		int currPointsInBox = 0;
-		
-		if (!sketch.sequentialPoints){
+
+		if (!sketch.sequentialPoints) {
 			topCount = depthPoints.length;
 			sketch.strokeWeight(5);
 			skip = 5;
-		}else{
+		} else {
 			sketch.strokeWeight(3);
 			skip = 2;
 		}
 
-//		for (int i = 0; i < depthPoints.length; i += skip) {
+		// for (int i = 0; i < depthPoints.length; i += skip) {
 		for (int i = 0; i < topCount; i += skip) {
 			PVector currentP = depthPoints[i];
 
@@ -223,10 +322,10 @@ public class KinectCanvas {
 						// is in box!
 						if (currentP.x == 0 && currentP.y == 0
 								&& currentP.z == 0) {
-							//nothgin
-						}else{
+							// nothgin
+						} else {
 							currPointsInBox++;
-							
+
 						}
 					}
 
@@ -250,12 +349,32 @@ public class KinectCanvas {
 		// check how may points
 
 		sketch.popMatrix();
-		if (topCount<depthPoints.length-1){
-			topCount+=512;
-		}else{
+		if (topCount < depthPoints.length - 1) {
+			topCount += 512;
+		} else {
 			topCount = 0;
 		}
 
+	}
+
+	private void getDepthPoints() {
+		
+		if (controller.kinectConnected) {
+
+			depthPoints = sketch.kinectController.kinect.depthMapRealWorld();
+		} else {
+			try {
+				// only load if null
+				if (depthPoints == null) {
+					depthPoints = parseTextFileToDepth();
+				}
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		
 	}
 
 	private PVector[] parseTextFileToDepth() throws FileNotFoundException {
