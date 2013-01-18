@@ -28,6 +28,10 @@ public class MyControlListener implements ControlListener {
 	    	sketch.println("toggle point cloud");
 	    	sketch.togglePointCloud(theEvent.getController().getValue());
 	    }
+	    if (theEvent.getController().getLabel()=="Toggle Seq Draw"){
+	    	sketch.println("Toggle Seq Draw");
+	    	sketch.sequentialPoints = !sketch.sequentialPoints; 
+	    }
 		
 	  }
 

@@ -17,10 +17,11 @@ public class KinectToPlane extends PApplet {
 	public boolean showPointCloud;
 	private float hue = 0;
 	public boolean cmdDown;
+	public boolean sequentialPoints;
 
 	public void setup() {
 		size(1280, 768, OPENGL);
-		colorMode(HSB, 5000, 100, 100);
+		colorMode(HSB, 4500, 100, 100);
 		ui = new UserInterface(this);
 
 		kinectController = new KinectController(this);

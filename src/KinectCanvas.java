@@ -26,6 +26,8 @@ public class KinectCanvas {
 	private PVector[] depthPoints;
 	private float mouseRotation;
 	private float mouseRotationX;
+	private int pointsInBox = 0;
+	private int topCount;
 
 	public KinectCanvas(KinectToPlane app) {
 		sketch = app;
@@ -36,7 +38,7 @@ public class KinectCanvas {
 	}
 
 	private void init() {
-
+		topCount = 0;
 		wave = new SineWave(0, .005f, 1, 0);
 		wave2 = new SineWave(.7f, .005f, 1, 0);
 		// cam = new PeasyCam((PApplet)sketch, 0, 0, 0, 1000);
@@ -165,24 +167,37 @@ public class KinectCanvas {
 		sketch.background(0);
 		sketch.pushMatrix();
 
-		//allow control via mouse
+		// allow control via mouse
 		if (sketch.cmdDown) {
-			 mouseRotation = sketch.map(sketch.mouseX, 0, sketch.width, -360, 360);
-			 mouseRotationX = sketch.map(sketch.mouseY, 0, sketch.height,
-						-180, 180);
+			mouseRotation = sketch.map(sketch.mouseX, 0, sketch.width, -360,
+					360);
+			mouseRotationX = sketch.map(sketch.mouseY, 0, sketch.height, -180,
+					180);
 			s = sketch.map(sketch.mouseY, 0, sketch.height, -10, 10);
 		}
 		sketch.translate(sketch.width * .5f, sketch.height * .5f, -1000);
 		sketch.rotateX(sketch.radians(180));
 		sketch.translate(0, 0, 1000);
-		
+
 		sketch.rotateY(sketch.radians(mouseRotation));
-		
+
 		// rotateZ(radians(mouseRotation));
 		sketch.translate(-300, -500, s * -1000);
 		sketch.scale(s);
 
-		for (int i = 0; i < depthPoints.length; i += skip) {
+		int currPointsInBox = 0;
+		
+		if (!sketch.sequentialPoints){
+			topCount = depthPoints.length;
+			sketch.strokeWeight(5);
+			skip = 5;
+		}else{
+			sketch.strokeWeight(3);
+			skip = 2;
+		}
+
+//		for (int i = 0; i < depthPoints.length; i += skip) {
+		for (int i = 0; i < topCount; i += skip) {
 			PVector currentP = depthPoints[i];
 
 			theX = sketch.map(currentP.x, -1750, 1200, 0, 640);
@@ -190,7 +205,39 @@ public class KinectCanvas {
 			theZ = sketch.map(currentP.z, 0, 3600, 0, 480);
 			sketch.stroke(currentP.z, 100, 100);
 			sketch.point(theX, theY, theZ);
+			// check if it is in the box
 
+			if (currentP.x > ui.boxX.getValue() - ui.boxWidth.getValue() * .5f
+					&& currentP.x < ui.boxX.getValue() + ui.boxWidth.getValue()
+							* .5f) {
+
+				if (currentP.y > ui.boxY.getValue() - ui.boxHeight.getValue()
+						* .5f
+						&& currentP.y < ui.boxY.getValue()
+								+ ui.boxHeight.getValue() * .5f) {
+
+					if (currentP.z > ui.boxZ.getValue()
+							- ui.boxDepth.getValue() * .5f
+							&& currentP.z < ui.boxZ.getValue()
+									+ ui.boxDepth.getValue() * .5f) {
+						// is in box!
+						if (currentP.x == 0 && currentP.y == 0
+								&& currentP.z == 0) {
+							//nothgin
+						}else{
+							currPointsInBox++;
+							
+						}
+					}
+
+				}
+
+			}
+
+		}
+		if (currPointsInBox != pointsInBox) {
+			pointsInBox = currPointsInBox;
+			sketch.println("POINTS IN BOX:" + pointsInBox);
 		}
 		// TODO DRAW BOX HERE
 
@@ -200,8 +247,14 @@ public class KinectCanvas {
 		sketch.noFill();
 		sketch.box(ui.boxWidth.getValue(), ui.boxHeight.getValue(),
 				ui.boxDepth.getValue());
+		// check how may points
 
 		sketch.popMatrix();
+		if (topCount<depthPoints.length-1){
+			topCount+=512;
+		}else{
+			topCount = 0;
+		}
 
 	}
 

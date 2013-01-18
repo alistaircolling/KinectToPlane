@@ -45,6 +45,7 @@ public class UserInterface {
 	public Slider boxZ;
 	private Println console;
 	public Textarea myTextarea;
+	private Toggle toggleSequentialDraw;
 
 	
 	public UserInterface(KinectToPlane app) {
@@ -128,6 +129,11 @@ public class UserInterface {
 
 		togglePointCloud = cp5.addToggle("toggle Point Cloud").setColorCaptionLabel(textCol)
 				.setGroup("rectPos").setPosition(0, 350)
+				.addListener(myListener)
+				.setSize(sliderHeight, sliderHeight);
+		
+		toggleSequentialDraw = cp5.addToggle("Toggle Seq Draw").setColorCaptionLabel(textCol)
+				.setGroup("rectPos").setPosition(0, 385)
 				.addListener(myListener)
 				.setSize(sliderHeight, sliderHeight);
 		
