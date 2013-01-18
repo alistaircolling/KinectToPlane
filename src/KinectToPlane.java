@@ -21,7 +21,7 @@ public class KinectToPlane extends PApplet {
 
 	public void setup() {
 		size(1280, 768, OPENGL);
-		colorMode(HSB, 4500, 100, 100);
+		colorMode(HSB, 1000, 1000, 100);
 		ui = new UserInterface(this);
 
 		kinectController = new KinectController(this);

@@ -48,7 +48,8 @@ public class KinectCanvas {
 		wave = new SineWave(0, .005f, 1, 0);
 		wave2 = new SineWave(.7f, .005f, 1, 0);
 		gfx = new ToxiclibsSupport(sketch);
-		// cam = new PeasyCam((PApplet)sketch, 0, 0, 0, 1000);
+//		cam = new PeasyCam((PApplet)sketch, 0, 0, 0, 1000);
+	//	cam = new PeasyCam(sketch, 0,0,0,1000);
 
 	}
 
@@ -133,11 +134,12 @@ public class KinectCanvas {
 
 		TriangleMesh triMesh = null;
 		TriangleMesh triMesh2 = null;
-		int skip = 10;
+		int skip = 5;
 		float maxX = 0;
 		float maxY = 0;
 		float maxZ = 0;
-		int minZ = 1300;
+		int minZ = 500;
+		float lastZ = 0;
 		
 		
 		for (int x = 0; x < 640 - skip; x+=skip) {
@@ -151,7 +153,6 @@ public class KinectCanvas {
 				PVector vect3 = depthPoints[(x + ((y + skip) * 640))];
 				PVector vect4 = depthPoints[(x + ((y + skip) * 640) + skip)];
 				
-				PVector[] vects = {vect1, vect2, vect3, vect4};
 				
 				if (vect1.x>maxX) maxX = vect1.x;
 				if (vect2.x>maxX) maxX = vect2.x;
@@ -166,12 +167,42 @@ public class KinectCanvas {
 				if (vect3.z>maxZ) maxZ = vect3.z;
 				if (vect4.z>maxZ) maxZ = vect4.z;
 				
+				maxX = 1500;
+				maxY = 1300;
+				maxZ = 6500;
+				
+				
 				//if any of the vectors have a z value of less than X set to the highest val
 				
 				if (vect1.z <minZ) vect1.z = maxZ;
 				if (vect2.z <minZ) vect2.z = maxZ;
 				if (vect3.z <minZ) vect3.z = maxZ;
 				if (vect4.z <minZ) vect4.z = maxZ;
+		
+				/*
+				if (vect1.z <minZ) {
+					vect1.z = lastZ;
+				}else{
+					lastZ = vect1.z;
+				}
+				if (vect2.z <minZ) {
+					vect2.z = lastZ;
+				}else{
+					lastZ = vect2.z;
+				}
+				if (vect3.z <minZ) {
+					vect3.z = lastZ;
+				}else{
+					lastZ = vect3.z;
+				}
+				if (vect4.z <minZ) {
+					vect4.z = lastZ;
+				}else{
+					lastZ = vect4.z;
+				}
+			*/
+				
+				
 				
 				
 				Vertex v1 = new Vertex(new Vec3D(vect1.x, vect1.y, vect1.z), 0);
@@ -196,7 +227,7 @@ public class KinectCanvas {
 				// triMesh2.rotateX(rotationX);
 
 				sketch.noStroke();
-				sketch.fill(x, y, 100);
+				sketch.fill(x, 1000, 100);
 				gfx.mesh(triMesh);
 				gfx.mesh(triMesh2);
 
@@ -204,15 +235,19 @@ public class KinectCanvas {
 			//	bgMesh.addMesh(triMesh2);
 
 			}
+			
 
 		}
-
-		rotation += sketch.map(sketch.mouseY, 0, sketch.height, -.1f, .1f);
+		
+		
+		if (sketch.cmdDown){
+			rotation += sketch.map(sketch.mouseY, 0, sketch.height, -.1f, .1f);
+		}
 
 		// set cam positions
 		camX = 0;// map(mouseX, 0, width, -500, 500);
 		camY = 0;
-		camZ = 4000;// map(mouseY, 0, height, -8000, 8000);
+		camZ = 2000;// map(mouseY, 0, height, -8000, 8000);
 
 		sketch.camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
 
