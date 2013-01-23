@@ -34,6 +34,7 @@ public class KinectCanvas {
 	private int topCount;
 	private ToxiclibsSupport gfx;
 	float camX, camY, camZ;
+	private float colorCount;
 
 	public KinectCanvas(KinectToPlane app) {
 		sketch = app;
@@ -45,7 +46,7 @@ public class KinectCanvas {
 
 	private void init() {
 		topCount = 0;
-		wave = new SineWave(0, .005f, 1, 0);
+		wave = new SineWave(0, .005f, 1, 0);	
 		wave2 = new SineWave(.7f, .005f, 1, 0);
 		gfx = new ToxiclibsSupport(sketch);
 //		cam = new PeasyCam((PApplet)sketch, 0, 0, 0, 1000);
@@ -66,10 +67,12 @@ public class KinectCanvas {
 	public void draw(ArrayList<Head> heads) {
 
 		// show kinect images
+		
+		sketch.background(120);
 
 		if (controller.kinectConnected)
 			sketch.image(sketch.kinectController.kinect.depthImage(), 0, 0);
-		if (sketch.showPointCloud) {
+		if (sketch.showPointCloud ){;//&& sketch.drawPointCloud) {
 			getDepthPoints();
 			// drawPointCloud();
 			drawMesh();
@@ -84,8 +87,13 @@ public class KinectCanvas {
 				sketch.pushMatrix();
 				// draw the rect
 				sketch.fill(TColor.MAGENTA.toARGB());
-				sketch.translate(ui.xPos.getValue(), ui.yPos.getValue(),
-						ui.zPos.getValue());
+				try {
+					sketch.translate(ui.xPos.getValue(), ui.yPos.getValue(),
+							ui.zPos.getValue());
+					
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
 				sketch.rotateX(ui.xAxis.getValue());
 				sketch.rotateY(ui.yAxis.getValue());
 				sketch.rotateZ(ui.zAxis.getValue());
@@ -138,7 +146,7 @@ public class KinectCanvas {
 		float maxX = 0;
 		float maxY = 0;
 		float maxZ = 0;
-		int minZ = 500;
+		int minZ = 800;
 		float lastZ = 0;
 		
 		
@@ -174,10 +182,10 @@ public class KinectCanvas {
 				
 				//if any of the vectors have a z value of less than X set to the highest val
 				
-				if (vect1.z <minZ) vect1.z = maxZ;
+			/*	if (vect1.z <minZ) vect1.z = maxZ;
 				if (vect2.z <minZ) vect2.z = maxZ;
 				if (vect3.z <minZ) vect3.z = maxZ;
-				if (vect4.z <minZ) vect4.z = maxZ;
+				if (vect4.z <minZ) vect4.z = maxZ;*/
 		
 				/*
 				if (vect1.z <minZ) {
@@ -204,12 +212,17 @@ public class KinectCanvas {
 				
 				
 				
+
+				if(vect1.z>maxZ || vect1.z <minZ) vect1 = vect4;
+				if(vect4.z>maxZ || vect4.z <minZ) vect4 = vect3;
+				if(vect2.z>maxZ || vect2.z <minZ) vect2 = vect1;
+				if(vect3.z>maxZ || vect3.z <minZ) vect3 = vect2;
 				
 				Vertex v1 = new Vertex(new Vec3D(vect1.x, vect1.y, vect1.z), 0);
 				Vertex v2 = new Vertex(new Vec3D(vect2.x, vect2.y, vect2.z), 0);
 				Vertex v3 = new Vertex(new Vec3D(vect3.x, vect3.y, vect3.z), 0);
 				Vertex v4 = new Vertex(new Vec3D(vect4.x, vect4.y, vect4.z), 0);
-
+				
 				triMesh.addFace(v1, v2, v3);
 				triMesh2.addFace(v2, v3, v4);
 				
@@ -227,7 +240,7 @@ public class KinectCanvas {
 				// triMesh2.rotateX(rotationX);
 
 				sketch.noStroke();
-				sketch.fill(x, 1000, 100);
+				sketch.fill(vect4.z, 1000, 100);
 				gfx.mesh(triMesh);
 				gfx.mesh(triMesh2);
 
@@ -245,9 +258,9 @@ public class KinectCanvas {
 		}
 
 		// set cam positions
-		camX = 0;// map(mouseX, 0, width, -500, 500);
-		camY = 0;
-		camZ = 2000;// map(mouseY, 0, height, -8000, 8000);
+		camX =  sketch.map(sketch.mouseX, 0, sketch.width, -5000, 5000);
+		camY = sketch.map(sketch.mouseY, 0, sketch.height, -3000, 3000);
+		camZ = sketch.zPos;//4000;//4000;// map(mouseY, 0, height, -8000, 8000);
 
 		sketch.camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
 

@@ -14,7 +14,7 @@ import controlP5.Toggle;
 public class UserInterface {
 
 	private KinectToPlane sketch;
-	private ControlP5 cp5;
+	public ControlP5 cp5;
 	private Group rectPos;
 	private int sliderWidth = 200;
 	private int sliderHeight = 20;
@@ -46,6 +46,7 @@ public class UserInterface {
 	private Println console;
 	public Textarea myTextarea;
 	private Toggle toggleSequentialDraw;
+	public Slider hsb;
 
 	
 	public UserInterface(KinectToPlane app) {
@@ -61,6 +62,7 @@ public class UserInterface {
 		myListener = new MyControlListener(sketch);
 		
 		cp5 = new ControlP5(sketch);
+		cp5.setAutoDraw(false);
 		
 		cp5.addTextlabel("CONTROLS");
 
@@ -137,11 +139,18 @@ public class UserInterface {
 				.addListener(myListener)
 				.setSize(sliderHeight, sliderHeight);
 		
+		hsb = cp5.addSlider("HSB").setPosition(0, 410)
+				.setSize(sliderWidth, sliderHeight).setGroup("rectPos")
+				.setRange(0, 6000).setColorCaptionLabel(textCol)
+				.addListener(myListener)
+				.setHandleSize(10).setDecimalPrecision(0);
+		
 		boxPos = cp5.addGroup("BOX PARAMS").setPosition(sketch.width-250, 10)
 			//	 .setBackgroundColor(TColor.BLUE.toARGB())
 				 .setColorForeground(TColor.CYAN.toARGB())
 				 .setSize(230, 400);
 				
+		
 
 		
 		boxWidth = cp5.addSlider("BOX WIDTH").setPosition(0, 0)
@@ -176,6 +185,8 @@ public class UserInterface {
 				.addListener(myListener)
 				.setHandleSize(10).setDecimalPrecision(0);
 		
+		
+		
 		myTextarea = cp5.addTextarea("console")
                 .setPosition(0, sketch.height-300)
                 .setGroup("rectPos")
@@ -207,6 +218,11 @@ public class UserInterface {
 			cp5.show();
 		}
 
+	}
+
+	public void draw() {
+		cp5.draw();
+		
 	}
 
 }

@@ -18,12 +18,15 @@ public class KinectToPlane extends PApplet {
 	private float hue = 0;
 	public boolean cmdDown;
 	public boolean sequentialPoints;
+	private int pointCloudVis;
+	public boolean drawPointCloud;
+	public int zPos;
 
 	public void setup() {
 		size(1280, 768, OPENGL);
-		colorMode(HSB, 1000, 1000, 100);
-		ui = new UserInterface(this);
+		colorMode(HSB, 12000, 1000, 100);
 
+		ui = new UserInterface(this);
 		kinectController = new KinectController(this);
 		println("kinect controller setup");
 
@@ -37,8 +40,16 @@ public class KinectToPlane extends PApplet {
 
 		background(60, 0, 100);
 		// update the kinect info
+		pushMatrix();
 		kinectController.draw();
 		kinectCanvas.draw(kinectController.heads);
+		if (pointCloudVis==1){
+			ui = null;
+			ui  = new UserInterface(this);
+			ui.cp5.setMoveable(true);
+		}
+		popMatrix();
+		ui.draw();
 
 	}
 
@@ -58,6 +69,19 @@ public class KinectToPlane extends PApplet {
 		if (keyCode==157){
 			cmdDown = false;
 		}
+		if (keyCode==80){
+			if (pointCloudVis==0) {
+				pointCloudVis = 1;
+			}else{
+				pointCloudVis = 0;
+			}
+			togglePointCloud(pointCloudVis);
+
+			//reset camera
+
+			camera(0, 0	, 0, 0, 0, 0, 0, 1, 0);
+		}
+		
 	}
 
 	public void keyPressed() {
@@ -66,9 +90,19 @@ public class KinectToPlane extends PApplet {
 		//
 		case 67:
 			ui.toggleShow();
+		//	drawPointCloud = !drawPointCloud;
+			
 			break;
 		case 157:
 			cmdDown = true;
+			break;
+		case 38:
+			//increase
+			zPos += 100;
+			break;
+		case 40:
+			zPos -= 100;
+			//decreas
 			break;
 
 		default:
