@@ -4,6 +4,7 @@ import toxi.geom.Rect;
 import controlP5.Bang;
 import controlP5.ControlP5;
 import controlP5.Group;
+import controlP5.Knob;
 import controlP5.ListBox;
 import controlP5.Println;
 import controlP5.Slider;
@@ -22,7 +23,7 @@ public class UserInterface {
 
 	private Slider2D xzPos;
 
-	private int textCol = TColor.BLACK.toARGB();
+	private int textCol = TColor.WHITE.toARGB();
 	public Slider xPos;
 	public Slider yPos;
 	public Slider zPos;
@@ -47,7 +48,13 @@ public class UserInterface {
 	public Textarea myTextarea;
 	private Toggle toggleSequentialDraw;
 	public Slider hsb;
-
+	private Group camPos;
+	public Knob cameraX ;
+	public Knob cameraY;
+	public Knob cameraZ;
+	public Toggle rotateBang;
+	public Knob smooth;
+	
 	
 	public UserInterface(KinectToPlane app) {
 
@@ -139,11 +146,30 @@ public class UserInterface {
 				.addListener(myListener)
 				.setSize(sliderHeight, sliderHeight);
 		
-		hsb = cp5.addSlider("HSB").setPosition(0, 410)
-				.setSize(sliderWidth, sliderHeight).setGroup("rectPos")
-				.setRange(0, 6000).setColorCaptionLabel(textCol)
+		
+
+		rotateBang = cp5.addToggle("rotate mesh").setColorCaptionLabel(textCol)
+				.setGroup("rectPos").setPosition(100, 385)
 				.addListener(myListener)
+				.setSize(sliderHeight, sliderHeight);
+		
+		hsb = cp5.addSlider("HSB").setPosition(0, 430)
+				.setSize(sliderWidth, sliderHeight).setGroup("rectPos")
+				.setRange(0, 12000).setColorCaptionLabel(textCol)
+				.addListener(myListener)
+				.setValue(5500)
 				.setHandleSize(10).setDecimalPrecision(0);
+		
+		smooth = cp5.addKnob("SMOOTH")
+				.setPosition(250, 20)
+	               .setRange(0,16)
+	               .setGroup("rectPos")
+	               .setValue(0)
+	               .setRadius(20)
+	               .setDecimalPrecision(0)
+	               .setDragDirection(Knob.VERTICAL);
+	               
+		
 		
 		boxPos = cp5.addGroup("BOX PARAMS").setPosition(sketch.width-250, 10)
 			//	 .setBackgroundColor(TColor.BLUE.toARGB())
@@ -185,6 +211,36 @@ public class UserInterface {
 				.addListener(myListener)
 				.setHandleSize(10).setDecimalPrecision(0);
 		
+		camPos = cp5.addGroup("CAMERA PARAMS").setPosition(sketch.width-250, 150)
+				//	 .setBackgroundColor(TColor.BLUE.toARGB())
+					 .setColorLabel(TColor.WHITE.toARGB())
+					 .setSize(230, 400);
+		
+		
+		cameraX = cp5.addKnob("CAMERA X")
+				.setPosition(0, 10)
+	               .setRange(-3000,3000)
+	               .setGroup("CAMERA PARAMS")
+	               .setValue(0)
+	               .setRadius(50)
+	               .setDragDirection(Knob.VERTICAL);
+	               
+		cameraY = cp5.addKnob("CAMERA Y")
+				.setPosition(120, 10)
+	               .setRange(-3000,3000)
+	               .setGroup("CAMERA PARAMS")
+	               .setValue(0)
+	               .setRadius(50)
+	               .setDragDirection(Knob.VERTICAL);
+	               
+		cameraZ = cp5.addKnob("CAMERA Z")
+				.setPosition(60, 120)
+	               .setRange(-5000,5000)
+	               .setGroup("CAMERA PARAMS")
+	               .setValue(-3000)
+	               .setRadius(50)
+	               .setDragDirection(Knob.VERTICAL);
+	               
 		
 		
 		myTextarea = cp5.addTextarea("console")

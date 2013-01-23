@@ -14,7 +14,7 @@ public class KinectToPlane extends PApplet {
 	private int bgCol;
 	public KinectCanvas kinectCanvas;
 	private ArrayList<Rect> rects;
-	public boolean showPointCloud;
+	public boolean showPointCloud = true;
 	private float hue = 0;
 	public boolean cmdDown;
 	public boolean sequentialPoints;
@@ -24,7 +24,7 @@ public class KinectToPlane extends PApplet {
 
 	public void setup() {
 		size(1280, 768, OPENGL);
-		colorMode(HSB, 12000, 1000, 100);
+		colorMode(HSB, 6000, 1000, 100);
 
 		ui = new UserInterface(this);
 		kinectController = new KinectController(this);
@@ -37,18 +37,17 @@ public class KinectToPlane extends PApplet {
 	}
 
 	public void draw() {
-
+		
+		colorMode(HSB, ui.hsb.getValue(), 1000, 100);
+		
 		background(60, 0, 100);
 		// update the kinect info
 		pushMatrix();
 		kinectController.draw();
 		kinectCanvas.draw(kinectController.heads);
-		if (pointCloudVis==1){
-			ui = null;
-			ui  = new UserInterface(this);
-			ui.cp5.setMoveable(true);
-		}
+	
 		popMatrix();
+		noLights();
 		ui.draw();
 
 	}
@@ -69,19 +68,6 @@ public class KinectToPlane extends PApplet {
 		if (keyCode==157){
 			cmdDown = false;
 		}
-		if (keyCode==80){
-			if (pointCloudVis==0) {
-				pointCloudVis = 1;
-			}else{
-				pointCloudVis = 0;
-			}
-			togglePointCloud(pointCloudVis);
-
-			//reset camera
-
-			camera(0, 0	, 0, 0, 0, 0, 0, 1, 0);
-		}
-		
 	}
 
 	public void keyPressed() {

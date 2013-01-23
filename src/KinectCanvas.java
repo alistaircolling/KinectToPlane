@@ -1,3 +1,4 @@
+import java.awt.peer.LightweightPeer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -11,8 +12,10 @@ import processing.core.PVector;
 import toxi.color.TColor;
 import toxi.geom.Rect;
 import toxi.geom.Vec3D;
+import toxi.geom.mesh.LaplacianSmooth;
 import toxi.geom.mesh.TriangleMesh;
 import toxi.geom.mesh.Vertex;
+import toxi.geom.mesh.WETriangleMesh;
 import toxi.math.waves.SineWave;
 import toxi.processing.ToxiclibsSupport;
 
@@ -72,7 +75,8 @@ public class KinectCanvas {
 
 		if (controller.kinectConnected)
 			sketch.image(sketch.kinectController.kinect.depthImage(), 0, 0);
-		if (sketch.showPointCloud ){;//&& sketch.drawPointCloud) {
+		if (sketch.showPointCloud ){
+			//&& sketch.drawPointCloud) {
 			getDepthPoints();
 			// drawPointCloud();
 			drawMesh();
@@ -135,13 +139,22 @@ public class KinectCanvas {
 
 		sketch.background(0);
 		sketch.lights();
+		sketch.directionalLight(0, 0, 1000, 0, 10000, 500);
+		sketch.specular(0,0,100);
+		sketch.shininess(16);
+		
+		camX = ui.cameraX.getValue();
+		camY = ui.cameraY.getValue();
+		camZ = ui.cameraZ.getValue();
+		
+		sketch.camera(camX, camY, camZ, 0,0,0,0,1,0);
+//		sketch.println("x:"+camX+" Y:"+camY+"z:"+camZ);
 
 		// mesh to go behind objects
 
-		TriangleMesh bgMesh = new TriangleMesh();
 
-		TriangleMesh triMesh = null;
-		TriangleMesh triMesh2 = null;
+		WETriangleMesh triMesh = null;
+		WETriangleMesh triMesh2 = null;
 		int skip = 5;
 		float maxX = 0;
 		float maxY = 0;
@@ -153,8 +166,8 @@ public class KinectCanvas {
 		for (int x = 0; x < 640 - skip; x+=skip) {
 			for (int y = 1; y < 480 - skip; y+=skip) {
 
-				triMesh = new TriangleMesh();
-				triMesh2 = new TriangleMesh();
+				triMesh = new WETriangleMesh();
+				triMesh2 = new WETriangleMesh();
 
 				PVector vect1 = depthPoints[x + (y * 640)];
 				PVector vect2 = depthPoints[(x + (y * 640) + skip)];
@@ -175,9 +188,9 @@ public class KinectCanvas {
 				if (vect3.z>maxZ) maxZ = vect3.z;
 				if (vect4.z>maxZ) maxZ = vect4.z;
 				
-				maxX = 1500;
-				maxY = 1300;
-				maxZ = 6500;
+			//	maxX = 1500;
+			//	maxY = 1300;
+			//	maxZ = 6500;
 				
 				
 				//if any of the vectors have a z value of less than X set to the highest val
@@ -211,12 +224,12 @@ public class KinectCanvas {
 			*/
 				
 				
-				
+				/*
 
 				if(vect1.z>maxZ || vect1.z <minZ) vect1 = vect4;
 				if(vect4.z>maxZ || vect4.z <minZ) vect4 = vect3;
 				if(vect2.z>maxZ || vect2.z <minZ) vect2 = vect1;
-				if(vect3.z>maxZ || vect3.z <minZ) vect3 = vect2;
+				if(vect3.z>maxZ || vect3.z <minZ) vect3 = vect2;*/
 				
 				Vertex v1 = new Vertex(new Vec3D(vect1.x, vect1.y, vect1.z), 0);
 				Vertex v2 = new Vertex(new Vec3D(vect2.x, vect2.y, vect2.z), 0);
@@ -225,25 +238,30 @@ public class KinectCanvas {
 				
 				triMesh.addFace(v1, v2, v3);
 				triMesh2.addFace(v2, v3, v4);
-				
 
+				//center the mesh
 				triMesh.translate(new Vec3D(0-(maxX*.5f), 0-(maxY*.5f), 0-(maxZ*.5f)));
 				triMesh2.translate(new Vec3D(0-(maxX*.5f), 0-(maxY*.5f), 0-(maxZ*0.5f)));
 
 				triMesh.rotateX(sketch.radians(180));
 				triMesh2.rotateX(sketch.radians(180));
 				
-				triMesh.rotateY(rotation);
-				triMesh2.rotateY(rotation);
+				triMesh.rotateY(sketch.radians(rotation));
+				triMesh2.rotateY(sketch.radians(rotation));
 
 				// triMesh.rotateX(rotationX);
 				// triMesh2.rotateX(rotationX);
 
 				sketch.noStroke();
 				sketch.fill(vect4.z, 1000, 100);
+				
+				
+				new LaplacianSmooth().filter(triMesh, (int) ui.smooth.getValue());
+				new LaplacianSmooth().filter(triMesh2, (int) ui.smooth.getValue());
+				
 				gfx.mesh(triMesh);
 				gfx.mesh(triMesh2);
-
+				
 			//	bgMesh.addMesh(triMesh);
 			//	bgMesh.addMesh(triMesh2);
 
@@ -253,16 +271,11 @@ public class KinectCanvas {
 		}
 		
 		
-		if (sketch.cmdDown){
-			rotation += sketch.map(sketch.mouseY, 0, sketch.height, -.1f, .1f);
+		
+		
+		if (ui.rotateBang.getValue()==1){
+			rotation +=5;
 		}
-
-		// set cam positions
-		camX =  sketch.map(sketch.mouseX, 0, sketch.width, -5000, 5000);
-		camY = sketch.map(sketch.mouseY, 0, sketch.height, -3000, 3000);
-		camZ = sketch.zPos;//4000;//4000;// map(mouseY, 0, height, -8000, 8000);
-
-		sketch.camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
 
 	}
 
