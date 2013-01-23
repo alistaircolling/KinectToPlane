@@ -6,7 +6,9 @@ import controlP5.ControlP5;
 import controlP5.Group;
 import controlP5.Knob;
 import controlP5.ListBox;
+import controlP5.Numberbox;
 import controlP5.Println;
+import controlP5.Range;
 import controlP5.Slider;
 import controlP5.Slider2D;
 import controlP5.Textarea;
@@ -53,7 +55,9 @@ public class UserInterface {
 	public Knob cameraY;
 	public Knob cameraZ;
 	public Toggle rotateBang;
-	public Knob smooth;
+	public Numberbox smooth;
+	public Range minZ;
+	public Slider skip;
 	
 	
 	public UserInterface(KinectToPlane app) {
@@ -153,6 +157,14 @@ public class UserInterface {
 				.addListener(myListener)
 				.setSize(sliderHeight, sliderHeight);
 		
+		
+		smooth = cp5.addNumberbox("SMOOTH")
+				.setMultiplier(1)
+				.setPosition(130, 350)
+	               .setRange(0,16)
+	               .setGroup("rectPos")
+	               .setValue(0);
+	               
 		hsb = cp5.addSlider("HSB").setPosition(0, 430)
 				.setSize(sliderWidth, sliderHeight).setGroup("rectPos")
 				.setRange(0, 12000).setColorCaptionLabel(textCol)
@@ -160,15 +172,24 @@ public class UserInterface {
 				.setValue(5500)
 				.setHandleSize(10).setDecimalPrecision(0);
 		
-		smooth = cp5.addKnob("SMOOTH")
-				.setPosition(250, 20)
-	               .setRange(0,16)
-	               .setGroup("rectPos")
-	               .setValue(0)
-	               .setRadius(20)
-	               .setDecimalPrecision(0)
-	               .setDragDirection(Knob.VERTICAL);
-	               
+		skip = cp5.addSlider("SKIP").setPosition(0, 450)
+				.setSize(sliderWidth, sliderHeight).setGroup("rectPos")
+				.setRange(1, 50).setColorCaptionLabel(textCol)
+				.addListener(myListener)
+				.setValue(5)
+				.setHandleSize(10).setDecimalPrecision(0);
+		
+		minZ = cp5.addRange("Z RANGE").setGroup("rectPos")
+				.setBroadcast(false) 
+	             .setPosition(0,470)
+	             .setSize(380,30)
+	             .setHandleSize(20)
+	             .setRange(-8000,8000)
+	             .setRangeValues(100, 4000)
+	             // after the initialization we turn broadcast back on again
+	             .setBroadcast(true);
+	             
+	            
 		
 		
 		boxPos = cp5.addGroup("BOX PARAMS").setPosition(sketch.width-250, 10)
@@ -237,7 +258,7 @@ public class UserInterface {
 				.setPosition(60, 120)
 	               .setRange(-5000,5000)
 	               .setGroup("CAMERA PARAMS")
-	               .setValue(-3000)
+	               .setValue(-5000)
 	               .setRadius(50)
 	               .setDragDirection(Knob.VERTICAL);
 	               

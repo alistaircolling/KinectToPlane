@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+import processing.app.tools.MovieMaker;
 import processing.core.PApplet;
 import toxi.color.TColor;
 import toxi.geom.Rect;
@@ -21,10 +22,12 @@ public class KinectToPlane extends PApplet {
 	private int pointCloudVis;
 	public boolean drawPointCloud;
 	public int zPos;
+	
 
 	public void setup() {
-		size(1280, 768, OPENGL);
+		size(1600, 900, OPENGL);
 		colorMode(HSB, 6000, 1000, 100);
+		
 
 		ui = new UserInterface(this);
 		kinectController = new KinectController(this);
@@ -40,7 +43,7 @@ public class KinectToPlane extends PApplet {
 		
 		colorMode(HSB, ui.hsb.getValue(), 1000, 100);
 		
-		background(60, 0, 100);
+		//background(60, 0, 100);
 		// update the kinect info
 		pushMatrix();
 		kinectController.draw();

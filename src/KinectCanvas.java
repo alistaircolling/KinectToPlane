@@ -38,6 +38,7 @@ public class KinectCanvas {
 	private ToxiclibsSupport gfx;
 	float camX, camY, camZ;
 	private float colorCount;
+	private PVector lastValidVect = new PVector(3000, 3000, 3000);
 
 	public KinectCanvas(KinectToPlane app) {
 		sketch = app;
@@ -49,11 +50,11 @@ public class KinectCanvas {
 
 	private void init() {
 		topCount = 0;
-		wave = new SineWave(0, .005f, 1, 0);	
+		wave = new SineWave(0, .005f, 1, 0);
 		wave2 = new SineWave(.7f, .005f, 1, 0);
 		gfx = new ToxiclibsSupport(sketch);
-//		cam = new PeasyCam((PApplet)sketch, 0, 0, 0, 1000);
-	//	cam = new PeasyCam(sketch, 0,0,0,1000);
+		// cam = new PeasyCam((PApplet)sketch, 0, 0, 0, 1000);
+		// cam = new PeasyCam(sketch, 0,0,0,1000);
 
 	}
 
@@ -70,16 +71,21 @@ public class KinectCanvas {
 	public void draw(ArrayList<Head> heads) {
 
 		// show kinect images
-		
-		sketch.background(120);
+
+		//sketch.background(120);
 
 		if (controller.kinectConnected)
 			sketch.image(sketch.kinectController.kinect.depthImage(), 0, 0);
-		if (sketch.showPointCloud ){
-			//&& sketch.drawPointCloud) {
+		if (sketch.showPointCloud) {
+			// && sketch.drawPointCloud) {
 			getDepthPoints();
 			// drawPointCloud();
-			drawMesh();
+		//	try {
+				drawMesh();
+				
+		//	} catch (Exception e) {
+				//sketch.println("error drawing mesh-- rmoved items from array!");
+			//}
 
 		} else {
 			if (!controller.kinectConnected) {
@@ -94,7 +100,7 @@ public class KinectCanvas {
 				try {
 					sketch.translate(ui.xPos.getValue(), ui.yPos.getValue(),
 							ui.zPos.getValue());
-					
+
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
@@ -140,31 +146,30 @@ public class KinectCanvas {
 		sketch.background(0);
 		sketch.lights();
 		sketch.directionalLight(0, 0, 1000, 0, 10000, 500);
-		sketch.specular(0,0,100);
+		sketch.specular(0, 0, 100);
 		sketch.shininess(16);
-		
+
 		camX = ui.cameraX.getValue();
 		camY = ui.cameraY.getValue();
 		camZ = ui.cameraZ.getValue();
-		
-		sketch.camera(camX, camY, camZ, 0,0,0,0,1,0);
-//		sketch.println("x:"+camX+" Y:"+camY+"z:"+camZ);
+
+		sketch.camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
+		// sketch.println("x:"+camX+" Y:"+camY+"z:"+camZ);
 
 		// mesh to go behind objects
 
-
 		WETriangleMesh triMesh = null;
 		WETriangleMesh triMesh2 = null;
-		int skip = 5;
+		int skip = (int) ui.skip.getValue();
 		float maxX = 0;
 		float maxY = 0;
-		float maxZ = 0;
+		float maxZ = ui.minZ.getArrayValue(1);
 		int minZ = 800;
 		float lastZ = 0;
-		
-		
-		for (int x = 0; x < 640 - skip; x+=skip) {
-			for (int y = 1; y < 480 - skip; y+=skip) {
+		 
+
+		for (int x = 0; x < 640 - skip; x += skip) {
+			for (int y = 1; y < 480 - skip; y += skip) {
 
 				triMesh = new WETriangleMesh();
 				triMesh2 = new WETriangleMesh();
@@ -173,79 +178,85 @@ public class KinectCanvas {
 				PVector vect2 = depthPoints[(x + (y * 640) + skip)];
 				PVector vect3 = depthPoints[(x + ((y + skip) * 640))];
 				PVector vect4 = depthPoints[(x + ((y + skip) * 640) + skip)];
-				
-				
-				if (vect1.x>maxX) maxX = vect1.x;
-				if (vect2.x>maxX) maxX = vect2.x;
-				if (vect3.x>maxX) maxX = vect3.x;
-				if (vect4.x>maxX) maxX = vect4.x;
-				if (vect1.y>maxY) maxY = vect1.y;
-				if (vect2.y>maxY) maxY = vect2.y;
-				if (vect3.y>maxY) maxY = vect3.y;
-				if (vect4.y>maxY) maxY = vect4.y;
-				if (vect1.z>maxZ) maxZ = vect1.z;
-				if (vect2.z>maxZ) maxZ = vect2.z;
-				if (vect3.z>maxZ) maxZ = vect3.z;
-				if (vect4.z>maxZ) maxZ = vect4.z;
-				
-			//	maxX = 1500;
-			//	maxY = 1300;
-			//	maxZ = 6500;
-				
-				
-				//if any of the vectors have a z value of less than X set to the highest val
-				
-			/*	if (vect1.z <minZ) vect1.z = maxZ;
-				if (vect2.z <minZ) vect2.z = maxZ;
-				if (vect3.z <minZ) vect3.z = maxZ;
-				if (vect4.z <minZ) vect4.z = maxZ;*/
-		
-				/*
-				if (vect1.z <minZ) {
-					vect1.z = lastZ;
-				}else{
-					lastZ = vect1.z;
-				}
-				if (vect2.z <minZ) {
-					vect2.z = lastZ;
-				}else{
-					lastZ = vect2.z;
-				}
-				if (vect3.z <minZ) {
-					vect3.z = lastZ;
-				}else{
-					lastZ = vect3.z;
-				}
-				if (vect4.z <minZ) {
-					vect4.z = lastZ;
-				}else{
-					lastZ = vect4.z;
-				}
-			*/
-				
-				
-				/*
 
-				if(vect1.z>maxZ || vect1.z <minZ) vect1 = vect4;
-				if(vect4.z>maxZ || vect4.z <minZ) vect4 = vect3;
-				if(vect2.z>maxZ || vect2.z <minZ) vect2 = vect1;
-				if(vect3.z>maxZ || vect3.z <minZ) vect3 = vect2;*/
-				
+				if (checkWithinBounds(vect1)){
+					lastValidVect = vect1; 
+				}else{
+					vect1 = lastValidVect;
+				}
+				if (checkWithinBounds(vect2)){
+					lastValidVect = vect2; 
+				}else{
+					vect2 = lastValidVect;
+				}
+				if (checkWithinBounds(vect3)){
+					lastValidVect = vect3; 
+				}else{
+					vect3 = lastValidVect;
+				}
+				if (checkWithinBounds(vect4)){
+					lastValidVect = vect4; 
+				}else{
+					vect4 = lastValidVect;
+				}
+
+				/*
+				 * if (vect1.x>maxX) maxX = vect1.x; if (vect2.x>maxX) maxX =
+				 * vect2.x; if (vect3.x>maxX) maxX = vect3.x; if (vect4.x>maxX)
+				 * maxX = vect4.x; if (vect1.y>maxY) maxY = vect1.y; if
+				 * (vect2.y>maxY) maxY = vect2.y; if (vect3.y>maxY) maxY =
+				 * vect3.y; if (vect4.y>maxY) maxY = vect4.y; if (vect1.z>maxZ)
+				 * maxZ = vect1.z; if (vect2.z>maxZ) maxZ = vect2.z; if
+				 * (vect3.z>maxZ) maxZ = vect3.z; if (vect4.z>maxZ) maxZ =
+				 * vect4.z;
+				 */
+
+				// maxX = 1500;
+				// maxY = 1300;
+				// maxZ = 6500;
+
+				// if any of the vectors have a z value of less than X set to
+				// the highest val
+
+				/*
+				 * if (vect1.z <minZ) vect1.z = maxZ; if (vect2.z <minZ) vect2.z
+				 * = maxZ; if (vect3.z <minZ) vect3.z = maxZ; if (vect4.z <minZ)
+				 * vect4.z = maxZ;
+				 */
+
+				/*
+				 * if (vect1.z <minZ) { vect1.z = lastZ; }else{ lastZ = vect1.z;
+				 * } if (vect2.z <minZ) { vect2.z = lastZ; }else{ lastZ =
+				 * vect2.z; } if (vect3.z <minZ) { vect3.z = lastZ; }else{ lastZ
+				 * = vect3.z; } if (vect4.z <minZ) { vect4.z = lastZ; }else{
+				 * lastZ = vect4.z; }
+				 */
+
+				/*
+				 * 
+				 * if(vect1.z>maxZ || vect1.z <minZ) vect1 = vect4;
+				 * if(vect4.z>maxZ || vect4.z <minZ) vect4 = vect3;
+				 * if(vect2.z>maxZ || vect2.z <minZ) vect2 = vect1;
+				 * if(vect3.z>maxZ || vect3.z <minZ) vect3 = vect2;
+				 */
+
 				Vertex v1 = new Vertex(new Vec3D(vect1.x, vect1.y, vect1.z), 0);
 				Vertex v2 = new Vertex(new Vec3D(vect2.x, vect2.y, vect2.z), 0);
 				Vertex v3 = new Vertex(new Vec3D(vect3.x, vect3.y, vect3.z), 0);
 				Vertex v4 = new Vertex(new Vec3D(vect4.x, vect4.y, vect4.z), 0);
-				
+
 				triMesh.addFace(v1, v2, v3);
 				triMesh2.addFace(v2, v3, v4);
 
-				//center the mesh
-				triMesh.translate(new Vec3D(0-(maxX*.5f), 0-(maxY*.5f), 0-(maxZ*.5f)));
-				triMesh2.translate(new Vec3D(0-(maxX*.5f), 0-(maxY*.5f), 0-(maxZ*0.5f)));
+				// center the mesh
+				triMesh.translate(new Vec3D(0 - (maxX * .5f), 0 - (maxY * .5f),
+						0 - (maxZ * .5f)));
+				triMesh2.translate(new Vec3D(0 - (maxX * .5f),
+						0 - (maxY * .5f), 0 - (maxZ * 0.5f)));
 
 				triMesh.rotateX(sketch.radians(180));
 				triMesh2.rotateX(sketch.radians(180));
-				
+
 				triMesh.rotateY(sketch.radians(rotation));
 				triMesh2.rotateY(sketch.radians(rotation));
 
@@ -254,42 +265,47 @@ public class KinectCanvas {
 
 				sketch.noStroke();
 				sketch.fill(vect4.z, 1000, 100);
-				
-				
-				new LaplacianSmooth().filter(triMesh, (int) ui.smooth.getValue());
-				new LaplacianSmooth().filter(triMesh2, (int) ui.smooth.getValue());
-				
+
+				new LaplacianSmooth().filter(triMesh,
+						(int) ui.smooth.getValue());
+				new LaplacianSmooth().filter(triMesh2,
+						(int) ui.smooth.getValue());
+
 				gfx.mesh(triMesh);
 				gfx.mesh(triMesh2);
-				
-			//	bgMesh.addMesh(triMesh);
-			//	bgMesh.addMesh(triMesh2);
+
+				// bgMesh.addMesh(triMesh);
+				// bgMesh.addMesh(triMesh2);
 
 			}
-			
 
 		}
-		
-		
-		
-		
-		if (ui.rotateBang.getValue()==1){
-			rotation +=5;
+
+		if (ui.rotateBang.getValue() == 1) {
+			rotation += 5;
+		}
+
+	}
+
+	private boolean checkWithinBounds(PVector vect) {
+		if (vect.z > ui.minZ.getArrayValue(0)
+				&& vect.z < ui.minZ.getArrayValue(1)) {
+			return true;
+		} else {
+			return false;
 		}
 
 	}
 
 	private boolean isAHole(PVector[] vects) {
-		
-		
-		
+
 		for (int i = 0; i < vects.length; i++) {
 			PVector vect = vects[i];
-			if (vect.x == 0 && vect.y==0 &&vect.z==0){
+			if (vect.x == 0 && vect.y == 0 && vect.z == 0) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -302,7 +318,6 @@ public class KinectCanvas {
 		// sketch.rotateZ(sketch.radians(rotation));
 		rotation += 2;
 
-		
 		/*
 		 * ***************** CODE TO WRITE TO FILE **************** String str =
 		 * "";
@@ -419,7 +434,7 @@ public class KinectCanvas {
 	}
 
 	private void getDepthPoints() {
-		
+
 		if (controller.kinectConnected) {
 
 			depthPoints = sketch.kinectController.kinect.depthMapRealWorld();
@@ -435,7 +450,6 @@ public class KinectCanvas {
 			}
 		}
 
-		
 	}
 
 	private PVector[] parseTextFileToDepth() throws FileNotFoundException {
