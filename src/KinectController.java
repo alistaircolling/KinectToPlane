@@ -10,7 +10,7 @@ public class KinectController {
 	private KinectToPlane mainSketch;
 	public SimpleOpenNI kinect;
 	public ArrayList<Head> heads;
-	public boolean kinectConnected = true;//false;
+	public boolean kinectConnected = false;
 
 	public KinectController(KinectToPlane sketch) {
 

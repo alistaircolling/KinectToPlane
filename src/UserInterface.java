@@ -12,6 +12,7 @@ import controlP5.Range;
 import controlP5.Slider;
 import controlP5.Slider2D;
 import controlP5.Textarea;
+import controlP5.Textlabel;
 import controlP5.Toggle;
 
 public class UserInterface {
@@ -58,6 +59,7 @@ public class UserInterface {
 	public Numberbox smooth;
 	public Range minZ;
 	public Slider skip;
+	public Textlabel pointCount;
 	
 	
 	public UserInterface(KinectToPlane app) {
@@ -204,16 +206,19 @@ public class UserInterface {
 				.setSize(sliderWidth, sliderHeight).setGroup("BOX PARAMS")
 				.setRange(0, 640).setColorCaptionLabel(textCol)
 				.addListener(myListener)
+				.setValue(300)
 				.setHandleSize(10).setDecimalPrecision(0);
 		boxHeight = cp5.addSlider("BOX HEIGHT").setPosition(0, 20)
 				.setSize(sliderWidth, sliderHeight).setGroup("BOX PARAMS")
 				.setRange(0, 640).setColorCaptionLabel(textCol)
 				.addListener(myListener)
+				.setValue(300)
 				.setHandleSize(10).setDecimalPrecision(0);
 		boxDepth = cp5.addSlider("BOX DEPTH").setPosition(0, 40)
 				.setSize(sliderWidth, sliderHeight).setGroup("BOX PARAMS")
 				.setRange(0, 640).setColorCaptionLabel(textCol)
 				.addListener(myListener)
+				.setValue(300)
 				.setHandleSize(10).setDecimalPrecision(0);
 		
 		boxX = cp5.addSlider("BOX X").setPosition(0, 65)
@@ -230,6 +235,7 @@ public class UserInterface {
 				.setSize(sliderWidth, sliderHeight).setGroup("BOX PARAMS")
 				.setRange(0, 640).setColorCaptionLabel(textCol)
 				.addListener(myListener)
+				.setValue(2000)
 				.setHandleSize(10).setDecimalPrecision(0);
 		
 		camPos = cp5.addGroup("CAMERA PARAMS").setPosition(sketch.width-250, 150)
@@ -261,6 +267,14 @@ public class UserInterface {
 	               .setValue(-5000)
 	               .setRadius(50)
 	               .setDragDirection(Knob.VERTICAL);
+		
+		pointCount = cp5.addTextlabel("label")
+                 .setText("POINT COUNT:")
+                 .setGroup("CAMERA PARAMS")
+                 .setPosition(20,250)
+                 .setColorValue(0xffffff00);
+                 
+                 
 	               
 		
 		
