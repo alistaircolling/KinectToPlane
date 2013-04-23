@@ -21,8 +21,8 @@ public class MyControlListener implements ControlListener {
 	//	stringBuilder.append("i got an event from: ");
 //		stringBuilder.append(theEvent.getController().getLabel());
 	//	PApplet.println(stringBuilder.toString());
-	    if (theEvent.getController().getLabel()=="createRect"){
-	    	canvas.addRect();
+	    if (theEvent.getController().getLabel()=="SAVE 3D IMAGE"){
+	    	canvas.saveImage();
 	    }
 	    if (theEvent.getController().getLabel()=="toggle Point Cloud"){
 	    	sketch.println("toggle point cloud");

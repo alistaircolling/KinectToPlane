@@ -1,10 +1,10 @@
-import java.awt.peer.LightweightPeer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 import peasy.PeasyCam;
@@ -14,7 +14,6 @@ import toxi.geom.AABB;
 import toxi.geom.Rect;
 import toxi.geom.Vec3D;
 import toxi.geom.mesh.LaplacianSmooth;
-import toxi.geom.mesh.TriangleMesh;
 import toxi.geom.mesh.Vertex;
 import toxi.geom.mesh.WETriangleMesh;
 import toxi.math.waves.SineWave;
@@ -51,14 +50,38 @@ public class KinectCanvas {
 	}
 
 	private void init() {
-		
-		
+
 		topCount = 0;
 		wave = new SineWave(0, .005f, 1, 0);
 		wave2 = new SineWave(.7f, .005f, 1, 0);
 		gfx = new ToxiclibsSupport(sketch);
 		// cam = new PeasyCam((PApplet)sketch, 0, 0, 0, 1000);
 		// cam = new PeasyCam(sketch, 0,0,0,1000);
+
+	}
+
+	public void saveImage() {
+
+		String str = "";
+
+		try {
+			Date date = new Date();
+			String ss = date.toString();
+			FileWriter outFile = new FileWriter("pointcloud_"+date.toString());
+
+			PrintWriter out = new PrintWriter(outFile);
+
+			// Also could be written as follows on one line //
+			// PrintWriter out = new PrintWriter(new FileWriter(args[0]));
+
+			for (int i = 0; i < depthPoints.length; i++) {
+				PVector vect = depthPoints[i];
+				out.println(vect.x + " " + vect.y + " " + vect.z + " ");
+			}
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -150,11 +173,13 @@ public class KinectCanvas {
 		sketch.camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
 		// sketch.println("x:"+camX+" Y:"+camY+"z:"+camZ);
 
-		//CREATE BOX BEFORE POINTS ARE ADDED
-		hitArea = new AABB(new Vec3D(ui.boxX.getValue(), ui.boxY.getValue(), ui.boxZ.getValue()), new Vec3D(ui.boxWidth.getValue(),ui.boxHeight.getValue(),ui.boxDepth.getValue()));
+		// CREATE BOX BEFORE POINTS ARE ADDED
+		hitArea = new AABB(new Vec3D(ui.boxX.getValue(), ui.boxY.getValue(),
+				ui.boxZ.getValue()), new Vec3D(ui.boxWidth.getValue(),
+				ui.boxHeight.getValue(), ui.boxDepth.getValue()));
 		hitArea.rotateY(sketch.radians(rotation));
 		sketch.strokeWeight(2);
-		sketch.stroke(3000,1000,100);
+		sketch.stroke(3000, 1000, 100);
 		sketch.noFill();
 		gfx.box(hitArea);
 		// mesh to go behind objects
@@ -205,12 +230,11 @@ public class KinectCanvas {
 				Vec3D vec2 = new Vec3D(vect2.x, vect2.y, vect2.z);
 				Vec3D vec3 = new Vec3D(vect3.x, vect3.y, vect3.z);
 				Vec3D vec4 = new Vec3D(vect4.x, vect4.y, vect4.z);
-				
-				if (hitArea.containsPoint(vec1)){
+
+				if (hitArea.containsPoint(vec1)) {
 					sketch.println("contains....");
 				}
-				
-			
+
 				Vertex v1 = new Vertex(vec1, 0);
 				Vertex v2 = new Vertex(vec2, 0);
 				Vertex v3 = new Vertex(vec3, 0);
@@ -245,21 +269,18 @@ public class KinectCanvas {
 				gfx.mesh(triMesh);
 				gfx.mesh(triMesh2);
 
-			
 			}
 
 		}
-		
-	
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("POINT COUNT: ");
 		sb.append(pointsInBox);
 		String strI = sb.toString();
 
-		//ui.pointCount.setText(strI);
-		sketch.println("points:"+pointsInBox);
-		
+		// ui.pointCount.setText(strI);
+		sketch.println("points:" + pointsInBox);
+
 		if (ui.rotateBang.getValue() == 1) {
 			rotation += 5;
 		}
@@ -296,22 +317,6 @@ public class KinectCanvas {
 		// sketch.rotateX(sketch.radians(180));
 		// sketch.rotateZ(sketch.radians(rotation));
 		rotation += 2;
-
-		/*
-		 * ***************** CODE TO WRITE TO FILE **************** String str =
-		 * "";
-		 * 
-		 * try { FileWriter outFile = new FileWriter("myNumbers.txt");
-		 * PrintWriter out = new PrintWriter(outFile);
-		 * 
-		 * // Also could be written as follows on one line // Printwriter out =
-		 * new PrintWriter(new FileWriter(args[0]));
-		 * 
-		 * // Write text to file for (int i = 0; i < depthPoints.length; i++) {
-		 * PVector vect = depthPoints[i];
-		 * out.println(vect.x+" "+vect.y+" "+vect.z+" "); } out.close(); } catch
-		 * (IOException e){ e.printStackTrace(); }
-		 */
 
 		float theX;
 		float theY;

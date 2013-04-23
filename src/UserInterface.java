@@ -30,7 +30,7 @@ public class UserInterface {
 	public Slider xPos;
 	public Slider yPos;
 	public Slider zPos;
-	public Bang createRect;
+	public Bang save3DImage;
 	public Slider rectWidth;
 	public Slider rectHeight;
 	public Slider xAxis;
@@ -86,7 +86,7 @@ public class UserInterface {
 
 		
 
-		createRect = cp5.addBang("createRect").setColorCaptionLabel(textCol)
+		save3DImage = cp5.addBang("SAVE 3D IMAGE").setColorCaptionLabel(textCol)
 				.setGroup("rectPos").setPosition(0, 15)
 				.addListener(myListener)
 				.setSize(sliderHeight, sliderHeight);
